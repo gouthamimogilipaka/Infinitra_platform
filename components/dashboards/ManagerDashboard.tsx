@@ -1,9 +1,12 @@
-import React, { useMemo } from 'react';
+
+import React, { useMemo, useState } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useAppContext } from '../../hooks/useAppContext';
 import { Card } from '../ui/Card';
-import { DollarSign, Briefcase, Users } from 'lucide-react';
+import { DollarSign, Briefcase, Users, PlusCircle } from 'lucide-react';
 import { GlobalFeed } from '../GlobalFeed';
+import { Button } from '../ui/Button';
+import { CreateProjectModal } from '../CreateProjectModal';
 
 const StatCard: React.FC<{ icon: React.ElementType, title: string, value: string, subtext: string }> = ({ icon: Icon, title, value, subtext }) => (
     <Card className="flex flex-col">
@@ -20,6 +23,7 @@ const StatCard: React.FC<{ icon: React.ElementType, title: string, value: string
 
 export const ManagerDashboard: React.FC = () => {
     const { users, projects } = useAppContext();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const totalPhantomUnits = useMemo(() => users.reduce((acc, user) => acc + user.phantom_units, 0), [users]);
     const totalProjects = projects.length;
@@ -38,6 +42,14 @@ export const ManagerDashboard: React.FC = () => {
 
     return (
         <div className="space-y-8">
+            <div className="flex justify-between items-start">
+                <div>{/* Placeholder for title moved to Dashboard.tsx */}</div>
+                <Button onClick={() => setIsModalOpen(true)}>
+                    <PlusCircle className="w-5 h-5 mr-2" />
+                    Create New Project
+                </Button>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <StatCard icon={Briefcase} title="Total Phantom Units" value={totalPhantomUnits.toLocaleString()} subtext="Across all partners" />
                 <StatCard icon={DollarSign} title="Total Project Value" value={`$${(projects.reduce((acc, p) => acc + p.value, 0) / 1000000).toFixed(2)}M`} subtext="Approved projects" />
@@ -71,6 +83,7 @@ export const ManagerDashboard: React.FC = () => {
                    <GlobalFeed />
                 </div>
             </div>
+            <CreateProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 };

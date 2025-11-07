@@ -62,7 +62,7 @@ const VestingProgress: React.FC<{ user: User }> = ({ user }) => {
     );
 };
 
-export const EmployeeDashboard: React.FC = () => {
+export const UserDashboard: React.FC = () => {
     const { currentUser, projects } = useAppContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../hooks/useAppContext';
-import { Project, ProjectType, ProjectStatus } from '../types';
+// FIX: Added ProjectScenario to import to be used as a default value for new projects.
+import { Project, ProjectType, ProjectStatus, ProjectScenario } from '../types';
 import { Button } from './ui/Button';
 import { X } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,11 +26,14 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, 
         if (!title || !description || !value || !currentUser || !deadline || !duration) return;
 
         const projectValue = parseFloat(value);
+        // FIX: Added missing 'scenario' and 'contributors' properties to align with the Project type.
         const newProject: Project = {
             project_id: uuidv4(),
             title,
             description,
             type,
+            scenario: ProjectScenario.Opportunity,
+            contributors: currentUser ? [{ user_id: currentUser.user_id, role_in_project: 'Creator', share_percentage: 100 }] : [],
             created_by_id: currentUser.user_id,
             value: projectValue,
             phantom_units: projectValue / PHANTOM_CONVERSION_RATE,

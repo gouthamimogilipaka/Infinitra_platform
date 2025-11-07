@@ -1,5 +1,6 @@
 export enum UserRole {
   Admin = 'admin',
+  Manager = 'manager',
   User = 'user',
 }
 
@@ -20,14 +21,20 @@ export enum ProjectType {
   IP = 'ip',
 }
 
+export enum ProjectScenario {
+  Opportunity = 'opportunity',
+  ProductIdeaSelfFunded = 'product_idea_self_funded',
+  ProductIdeaCompanyFunded = 'product_idea_company_funded',
+  JointVenture = 'joint_venture',
+  InternalInitiative = 'internal_initiative',
+}
+
 export type View =
   | 'dashboard'
   | 'projects'
   | 'manage-admins'
-  | 'manage-employees'
   | 'manage-users'
-  | 'profile'
-  | 'homepage';
+  | 'profile';
 
 export interface User {
   user_id: string;
@@ -43,11 +50,22 @@ export interface User {
   profile_picture?: string;
 }
 
+export interface Contributor {
+  user_id: string;
+  role_in_project: string;
+  share_percentage: number;
+}
+
 export interface Project {
   project_id: string;
   title: string;
   description: string;
   type: ProjectType;
+  scenario: ProjectScenario;
+  contributors: Contributor[];
+  phantom_pool_contribution_percentage?: number;
+  royalty_to_ideator_percentage?: number;
+  royalty_to_company_percentage?: number;
   created_by_id: string;
   value: number;
   phantom_units: number;

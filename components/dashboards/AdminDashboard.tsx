@@ -1,11 +1,13 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import { Card } from '../ui/Card';
 import { ProjectApprovalList } from '../ProjectApprovalList';
 import { GlobalFeed } from '../GlobalFeed';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { DollarSign, FolderKanban, Users } from 'lucide-react';
+import { DollarSign, FolderKanban, Users, PlusCircle } from 'lucide-react';
+import { Button } from '../ui/Button';
+import { CreateProjectModal } from '../CreateProjectModal';
 
 const StatCard: React.FC<{ icon: React.ElementType, title: string, value: string, subtext: string }> = ({ icon: Icon, title, value, subtext }) => (
     <Card>
@@ -21,7 +23,8 @@ const StatCard: React.FC<{ icon: React.ElementType, title: string, value: string
 );
 
 export const AdminDashboard: React.FC = () => {
-    const { users, projects } = useAppContext();
+    const { users, projects, hasPermission } = useAppContext();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const totalPhantomUnits = useMemo(() => users.reduce((acc, user) => acc + user.phantom_units, 0), [users]);
     const totalProjects = projects.length;
@@ -38,6 +41,16 @@ export const AdminDashboard: React.FC = () => {
 
     return (
         <div className="space-y-8">
+            <div className="flex justify-between items-start">
+                <div>{/* Placeholder for title moved to Dashboard.tsx */}</div>
+                {hasPermission('create_project') && (
+                    <Button onClick={() => setIsModalOpen(true)}>
+                        <PlusCircle className="w-5 h-5 mr-2" />
+                        Create New Project
+                    </Button>
+                )}
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <StatCard icon={Users} title="Active Users" value={activeUsers.toString()} subtext="Admins and Employees" />
                 <StatCard icon={FolderKanban} title="Total Projects" value={totalProjects.toLocaleString()} subtext="Across the company" />
@@ -71,9 +84,12 @@ export const AdminDashboard: React.FC = () => {
                 </div>
             </div>
 
-            <div>
-                <ProjectApprovalList />
-            </div>
+            {hasPermission('approve_projects') && (
+                <div>
+                    <ProjectApprovalList />
+                </div>
+            )}
+            <CreateProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 };

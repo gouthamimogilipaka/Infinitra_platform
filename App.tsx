@@ -6,18 +6,24 @@ import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
 import { AllProjects } from './components/AllProjects';
 import { ManageAdmins } from './components/ManageAdmins';
-import { ManageEmployees } from './components/ManageEmployees';
 import { ProfilePage } from './components/ProfilePage';
 import { ManageUsers } from './components/ManageUsers';
+import { Login } from './components/Login';
 import { Homepage } from './components/Homepage';
 
 
 const AppContent: React.FC = () => {
-  const { view, currentUser } = useAppContext();
+  const { view, currentUser, authView } = useAppContext();
 
   if (!currentUser) {
-      // In a real app, this might be a login page or public homepage
-      return <Homepage />;
+      switch (authView) {
+        case 'homepage':
+          return <Homepage />;
+        case 'login':
+          return <Login />;
+        default:
+          return <Homepage />;
+      }
   }
 
   const renderView = () => {
@@ -28,13 +34,10 @@ const AppContent: React.FC = () => {
         return <AllProjects />;
       case 'manage-admins':
         return <ManageAdmins />;
-      case 'manage-employees':
-        return <ManageEmployees />;
       case 'manage-users':
          return <ManageUsers />;
       case 'profile':
         return <ProfilePage />;
-      case 'homepage':
       default:
         return <Dashboard />;
     }

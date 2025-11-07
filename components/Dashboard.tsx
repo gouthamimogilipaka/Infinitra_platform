@@ -3,7 +3,6 @@ import { useAppContext } from '../hooks/useAppContext';
 import { UserRole } from '../types';
 import { AdminDashboard } from './dashboards/AdminDashboard';
 import { UserDashboard } from './dashboards/EmployeeDashboard';
-import { ManagerDashboard } from './dashboards/ManagerDashboard';
 
 export const Dashboard: React.FC = () => {
   const { currentUserRole, currentUser } = useAppContext();
@@ -16,8 +15,6 @@ export const Dashboard: React.FC = () => {
     switch (currentUserRole) {
       case UserRole.Admin:
         return <AdminDashboard />;
-      case UserRole.Manager:
-        return <ManagerDashboard />;
       case UserRole.User:
         return <UserDashboard />;
       default:

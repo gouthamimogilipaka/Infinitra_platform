@@ -1,4 +1,5 @@
 
+
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 import { User, Project, View, UserRole } from '../types';
 import { initialUsers, initialProjects } from '../constants';
@@ -14,7 +15,6 @@ type AuthView = 'homepage' | 'login';
 
 const permissionsByRole: Record<UserRole, Permission[] | ['all']> = {
     [UserRole.Admin]: ['all'],
-    [UserRole.Manager]: ['manage_users', 'approve_projects', 'create_project', 'view_all_projects'],
     [UserRole.User]: ['create_project'],
 };
 
@@ -52,8 +52,10 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({ children
   const hasPermission = (permission: Permission): boolean => {
       if (!currentUser) return false;
       const userPermissions = permissionsByRole[currentUser.role];
-      if (userPermissions.includes('all')) return true;
-      return userPermissions.includes(permission);
+      // FIX: Cast userPermissions to string[] as `includes` fails on the union type `Permission[] | ['all']`.
+      if ((userPermissions as string[]).includes('all')) return true;
+      // FIX: Cast userPermissions to string[] as `includes` fails on the union type `Permission[] | ['all']`.
+      return (userPermissions as string[]).includes(permission);
   };
 
   const login = (email: string): boolean => {
